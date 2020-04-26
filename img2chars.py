@@ -5,6 +5,7 @@ Created on Sun Apr 26 20:05:10 2020
 @author: Now
 """
 from PIL import Image
+import numpy as np
 import cv2
 
 #PIL的写法
@@ -30,10 +31,13 @@ def img2charsPIL(img_path, scale, chars):
 
 #OpenCV的写法
 def img2charsCV(imgPath, scale, chars):
-    img = cv2.imread(imgPath, 0)
-        
+    #适应中文路径
+    #img = cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), -1)
+    #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img = cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), 0)
+    
     chars_len = len(chars)
-    out_str = ""
+    out_str = ''
     
     #interpolation : INTER_NEAREST INTER_LINEAR INTER_AREA INTER_CUBIC INTER_LANCZOS4
     #interpolation=cv2.INTER_AREA效果更接近Image.ANTIALIAS
@@ -46,12 +50,15 @@ def img2charsCV(imgPath, scale, chars):
         for j in range(w):
             gray = img[i][j]
             out_str += chars[int(chars_len * gray / 256 ) - 1]
-        out_str += "\r\n"
+        out_str += '\r\n'
     return out_str
 
 if __name__ == "__main__":
+    #chars = list('\'​¿¿*??.@')
     #\033[33m{}\033[0m形成黄色字符,033[36m{}\033[0m形成蓝色字符
     #chars = ['.', '\033[33m?\033[0m', '@', '#', '\033[36m¿\033[0m', '*', '$', '\'']
     chars = ['\'', '\033[36m¿\033[0m', '\033[36m¿\033[0m', '*', '\033[33m?\033[0m', '\033[33m?\033[0m', '.', '@']
-    print(img2charsPIL('1.jpg', 150, chars))
-    print(img2charsCV('1.jpg', 150, chars))
+    print(img2charsPIL(r'1.jpg', 150, chars))
+    print(img2charsCV(r'\1.jpg', 150, chars))
+                
+                    
